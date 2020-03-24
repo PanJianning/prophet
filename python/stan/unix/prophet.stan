@@ -106,7 +106,7 @@ parameters {
 
 model {
   //priors
-  k ~ normal(0, 5);
+  k ~ normal(0, 1);
   m ~ normal(0, 5);
   delta ~ double_exponential(0, tau);
   sigma_obs ~ normal(0, 0.5);
