@@ -162,9 +162,9 @@ class Prophet(object):
             raise ValueError('Parameter "changepoint_range" must be in [0, 1]')
         if self.holidays is not None:
             if not (
-                isinstance(self.holidays, pd.DataFrame)
-                and 'ds' in self.holidays  # noqa W503
-                and 'holiday' in self.holidays  # noqa W503
+                    isinstance(self.holidays, pd.DataFrame)
+                    and 'ds' in self.holidays  # noqa W503
+                    and 'holiday' in self.holidays  # noqa W503
             ):
                 raise ValueError('holidays must be a DataFrame with "ds" and '
                                  '"holiday" columns.')
@@ -223,17 +223,17 @@ class Prophet(object):
                 name in get_holiday_names(self.country_holidays)):
             raise ValueError(
                 'Name {name!r} is a holiday name in {country_holidays}.'
-                .format(name=name, country_holidays=self.country_holidays)
+                    .format(name=name, country_holidays=self.country_holidays)
             )
         if check_seasonalities and name in self.seasonalities:
             raise ValueError(
                 'Name {name!r} already used for a seasonality.'
-                .format(name=name)
+                    .format(name=name)
             )
         if check_regressors and name in self.extra_regressors:
             raise ValueError(
                 'Name {name!r} already used for an added regressor.'
-                .format(name=name)
+                    .format(name=name)
             )
 
     def setup_dataframe(self, df, initialize_scales=False):
@@ -271,7 +271,7 @@ class Prophet(object):
             if name not in df:
                 raise ValueError(
                     'Regressor {name!r} missing from dataframe'
-                    .format(name=name)
+                        .format(name=name)
                 )
             df[name] = pd.to_numeric(df[name])
             if df[name].isnull().any():
@@ -284,12 +284,12 @@ class Prophet(object):
                 if condition_name not in df:
                     raise ValueError(
                         'Condition {condition_name!r} missing from dataframe'
-                        .format(condition_name=condition_name)
+                            .format(condition_name=condition_name)
                     )
                 if not df[condition_name].isin([True, False]).all():
                     raise ValueError(
                         'Found non-boolean in column {condition_name!r}'
-                        .format(condition_name=condition_name)
+                            .format(condition_name=condition_name)
                     )
                 df[condition_name] = df[condition_name].astype('bool')
 
@@ -354,7 +354,7 @@ class Prophet(object):
                 standardize = False
             if standardize == 'auto':
                 if set(df[name].unique()) == set([1, 0]):
-                    standardize = False #  Don't standardize binary variables.
+                    standardize = False  # Don't standardize binary variables.
                 else:
                     standardize = True
             if standardize:
@@ -392,7 +392,7 @@ class Prophet(object):
                 logger.info(
                     'n_changepoints greater than number of observations. '
                     'Using {n_changepoints}.'
-                    .format(n_changepoints=self.n_changepoints)
+                        .format(n_changepoints=self.n_changepoints)
                 )
             if self.n_changepoints > 0:
                 cp_indexes = (
@@ -501,7 +501,7 @@ class Prophet(object):
             holidays_to_add = pd.DataFrame({
                 'holiday': self.train_holiday_names[
                     np.logical_not(self.train_holiday_names
-                                       .isin(all_holidays.holiday))
+                                   .isin(all_holidays.holiday))
                 ]
             })
             all_holidays = pd.concat((all_holidays, holidays_to_add),
@@ -569,7 +569,7 @@ class Prophet(object):
         holiday_features = pd.DataFrame(expanded_holidays)
         # Make sure column order is consistent
         holiday_features = holiday_features[sorted(holiday_features.columns
-                                                                   .tolist())]
+                                                   .tolist())]
         prior_scale_list = [
             prior_scales[h.split('_delim_')[0]]
             for h in holiday_features.columns
@@ -729,7 +729,7 @@ class Prophet(object):
             logger.warning(
                 'Changing country holidays from {country_holidays!r} to '
                 '{country_name!r}.'
-                .format(
+                    .format(
                     country_holidays=self.country_holidays,
                     country_name=country_name,
                 )
@@ -861,7 +861,7 @@ class Prophet(object):
         component_cols.drop('zeros', axis=1, inplace=True, errors='ignore')
         # Validation
         if (max(component_cols['additive_terms']
-            + component_cols['multiplicative_terms']) > 1):
+                + component_cols['multiplicative_terms']) > 1):
             raise Exception('A bug occurred in seasonal components.')
         # Compare to the training, if set.
         if self.train_component_cols is not None:
@@ -916,7 +916,7 @@ class Prophet(object):
                 logger.info(
                     'Disabling {name} seasonality. Run prophet with '
                     '{name}_seasonality=True to override this.'
-                    .format(name=name)
+                        .format(name=name)
                 )
             else:
                 fourier_order = default_order
@@ -1129,7 +1129,7 @@ class Prophet(object):
         }
 
         if (history['y'].min() == history['y'].max()
-            and self.growth == 'linear'):
+                and self.growth == 'linear'):
             # Nothing to fit.
             self.params = stan_init
             self.params['sigma_obs'] = 1e-9
@@ -1146,7 +1146,7 @@ class Prophet(object):
             self.params['k'] = (self.params['k']
                                 + self.params['delta'].reshape(-1))
             self.params['delta'] = (np.zeros(self.params['delta'].shape)
-                                      .reshape((-1, 1)))
+                                    .reshape((-1, 1)))
 
         return self
 
@@ -1219,7 +1219,8 @@ class Prophet(object):
             indx = t >= t_s
             k_t[indx] += deltas[s]
             m_t[indx] += gammas[s]
-        return k_t * t + m_t
+        # return k_t * t + m_t
+        return m_t
 
     @staticmethod
     def piecewise_logistic(t, cap, deltas, k, m, changepoint_ts):
@@ -1485,7 +1486,7 @@ class Prophet(object):
         we only fall back to it if the array contains NaNs. See
         https://github.com/facebook/prophet/issues/1310 for more details.
         """
-        fn =  np.nanpercentile if np.isnan(a).any() else np.percentile
+        fn = np.nanpercentile if np.isnan(a).any() else np.percentile
         return fn(a, *args, **kwargs)
 
     def make_future_dataframe(self, periods, freq='D', include_history=True):

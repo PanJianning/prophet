@@ -106,8 +106,8 @@ parameters {
 
 model {
   //priors
-  k ~ normal(0, 1);
-  m ~ normal(0, 5);
+  k ~ normal(0, 0.1);
+  m ~ normal(0, 0.1);
   delta ~ double_exponential(0, tau);
   sigma_obs ~ normal(0, 0.5);
   beta ~ normal(0, sigmas);
@@ -115,8 +115,8 @@ model {
   // Likelihood
   if (trend_indicator == 0) {
     y ~ normal(
-      linear_trend(k, m, delta, t, A, t_change)
-      .* (1 + X * (beta .* s_m))
+      m
+      * (1 + X * (beta .* s_m))
       + X * (beta .* s_a),
       sigma_obs
     );
